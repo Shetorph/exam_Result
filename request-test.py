@@ -60,5 +60,5 @@ while(i<=28):
         print("-" * 25)
         print(f"Vize: {ders['vize']}, Ort: {ders['ort']}, Not: {ders['not']}, Durum: {ders['durum']}\n")
     print("↑" * 75)
-    time.sleep(checkSeconds)
+    time.sleep(kacSaniyedeBir)
     i+=1
