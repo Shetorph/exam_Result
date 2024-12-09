@@ -2,17 +2,14 @@ import requests
 import time
 from bs4 import BeautifulSoup
 
-#Sınır 3saat. Sonrasında cookie yenilenmesi lazım.
-#1saat 60dakika
-#1gün 1440dakika
-#50dakikada 1tekrar yapılıyor. 1gün çalışması için i<=28.8
-#2gün için i<=28.8*2
-#Bu hesaplamayla kaç gün çalıştıracağınızı belirleyin.
+#OBS DPU Öğrencileri için yapılmıştır.
 
-print("Lütfen cookie'yi giriniz.")
+print("Cookie'yi giriniz.")
 cookieValue = str(input())
 dersler = []
 i=0
+kacSaniyedeBir = 1800 #Tavsiye edilen süre. Saniye cinsinden yazınız.
+
 while(i<=28):
     
     dersler.clear()
@@ -63,5 +60,5 @@ while(i<=28):
         print("-" * 25)
         print(f"Vize: {ders['vize']}, Ort: {ders['ort']}, Not: {ders['not']}, Durum: {ders['durum']}\n")
     print("↑" * 75)
-    time.sleep(1800)
+    time.sleep(checkSeconds)
     i+=1
