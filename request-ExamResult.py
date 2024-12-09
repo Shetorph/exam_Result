@@ -6,12 +6,14 @@ from bs4 import BeautifulSoup
 
 print("Cookie'yi giriniz.")
 cookieValue = str(input())
-dersler = []
+
+print("Kaç saniyede bir kontrol edilecek?")
+kacSaniyedeBir = int(input())
+
 i=0
-kacSaniyedeBir = 1800 #Tavsiye edilen süre. Saniye cinsinden yazınız.
 
 while(i<=28):
-    
+    dersler = []
     dersler.clear()
     headers = {
         "accept": "*/*",
@@ -21,7 +23,6 @@ while(i<=28):
         "origin": "https://obs.dpu.edu.tr",
         "referer": "https://obs.dpu.edu.tr/oibs/std/index.aspx?curOp=0"
     }
-
 
     URl = "https://obs.dpu.edu.tr/oibs/std/not_listesi_op.aspx"
     response = requests.get(URl, headers=headers)
