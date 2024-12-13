@@ -3,63 +3,74 @@ import time
 from bs4 import BeautifulSoup
 
 #OBS DPU Öğrencileri için yapılmıştır.
+while(True):
 
-print("Cookie'yi giriniz.")
-cookieValue = str(input())
+    print("Cookie'yi giriniz.")
+    cookieValue = str(input())
+    if cookieValue == "":
+        print("Lütfen bir cookie girişi yapınız.")
+    else:
+        while (True):
+            print("Kaç dakikada bir kontrol edilecek? Sayıyla giriniz. [Max: 50]")
+            minDeger = 1
+            maxDeger = 50
+            kacSaniyedeBir = float(input())
+            if kacSaniyedeBir > maxDeger or kacSaniyedeBir < minDeger:
+                print("Lütfen en az 1 dakika en fazla 50 dakika olacak şekilde süre giriniz.")
+            else:
+                kacSaniyedeBir *= 60
+                while(True):
+                    dersler = []
+                    dersler.clear()
+                    headers = {
+                        "accept": "*/*",
+                        "cookie": cookieValue,
+                        "cache-control": "no-cache",
+                        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                        "origin": "https://obs.dpu.edu.tr",
+                        "referer": "https://obs.dpu.edu.tr/oibs/std/index.aspx?curOp=0"
+                        }
 
-print("Kaç saniyede bir kontrol edilecek?")
-kacSaniyedeBir = int(input())
+                    URl = "https://obs.dpu.edu.tr/oibs/std/not_listesi_op.aspx"
+                    response = requests.get(URl, headers=headers)
+                    soup = BeautifulSoup(response.content, "html.parser")
+                    rows = soup.select("#grd_not_listesi tr")[1:]
+                        
+                        
+                    for row in rows:
+                        cells = row.find_all("td")
+                        if len(cells) > 7:
+                            ders_adi = cells[2].text.strip()
 
-i=0
+                            # Vize notunu al
+                            vize_element = cells[4].find("span", string=lambda x: "Vize" in x if x else False)
+                            vize = None
+                            if vize_element:
+                                vize = vize_element.text.split(":")[-1].strip()
 
-while(i<=28):
-    dersler = []
-    dersler.clear()
-    headers = {
-        "accept": "*/*",
-        "cookie": cookieValue,
-        "cache-control": "no-cache",
-        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "origin": "https://obs.dpu.edu.tr",
-        "referer": "https://obs.dpu.edu.tr/oibs/std/index.aspx?curOp=0"
-    }
+                            # Ort, Not ve Durum değerlerini al
+                            ort = cells[5].text.strip()
+                            not_degeri = cells[6].text.strip()
+                            durum = cells[7].text.strip()
 
-    URl = "https://obs.dpu.edu.tr/oibs/std/not_listesi_op.aspx"
-    response = requests.get(URl, headers=headers)
-    soup = BeautifulSoup(response.content, "html.parser")
-    rows = soup.select("#grd_not_listesi tr")[1:]
-    
-    
-    for row in rows:
-        cells = row.find_all("td")
-        if len(cells) > 7:
-            ders_adi = cells[2].text.strip()
+                            dersler.append({
+                                "ders": ders_adi,
+                                "vize": vize,
+                                "ort": ort,
+                                "not": not_degeri,
+                                "durum": durum
+                            })
 
-            # Vize notunu al
-            vize_element = cells[4].find("span", string=lambda x: "Vize" in x if x else False)
-            vize = None
-            if vize_element:
-                vize = vize_element.text.split(":")[-1].strip()
-
-            # Ort, Not ve Durum değerlerini al
-            ort = cells[5].text.strip()
-            not_degeri = cells[6].text.strip()
-            durum = cells[7].text.strip()
-
-            dersler.append({
-                "ders": ders_adi,
-                "vize": vize,
-                "ort": ort,
-                "not": not_degeri,
-                "durum": durum
-            })
-
-    # Sonuçları yazdır
-    print("↓" * 75)
-    for ders in dersler:
-        print(f"Ders : {ders['ders']}")
-        print("-" * 25)
-        print(f"Vize: {ders['vize']}, Ort: {ders['ort']}, Not: {ders['not']}, Durum: {ders['durum']}\n")
-    print("↑" * 75)
-    time.sleep(kacSaniyedeBir)
-    i+=1
+                    # Sonuçları yazdır
+                    if not dersler:
+                        print("Veri bulunamadı cookie'yi doğru girip girmediğinizi kontrol ediniz veya yenileyiniz.")
+                        break
+                    else:
+                        print("↓" * 75)
+                        for ders in dersler:
+                            print(f"Ders : {ders['ders']}")
+                            print("-" * 25)
+                            print(f"Vize: {ders['vize']}, Ort: {ders['ort']}, Not: {ders['not']}, Durum: {ders['durum']}\n")
+                        print("↑" * 75)
+                        time.sleep(kacSaniyedeBir)
+                break
