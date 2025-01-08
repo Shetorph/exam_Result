@@ -44,10 +44,13 @@ while(True):
 
                             # Vize notunu al
                             vize_element = cells[4].find("span", string=lambda x: "Vize" in x if x else False)
+                            final_element = cells[4].find("span", string=lambda x: "Final" in x if x else False)
                             vize = None
+                            final = None
                             if vize_element:
                                 vize = vize_element.text.split(":")[-1].strip()
-
+                            if final_element:
+                                final = final_element.text.split(":")[-1].strip()
                             # Ort, Not ve Durum değerlerini al
                             ort = cells[5].text.strip()
                             not_degeri = cells[6].text.strip()
@@ -56,6 +59,7 @@ while(True):
                             dersler.append({
                                 "ders": ders_adi,
                                 "vize": vize,
+                                "final": final,
                                 "ort": ort,
                                 "not": not_degeri,
                                 "durum": durum
@@ -70,7 +74,7 @@ while(True):
                         for ders in dersler:
                             print(f"Ders : {ders['ders']}")
                             print("-" * 25)
-                            print(f"Vize: {ders['vize']}, Ort: {ders['ort']}, Not: {ders['not']}, Durum: {ders['durum']}\n")
+                            print(f"Vize: {ders['vize']}, Final: {ders['final']}, Ort: {ders['ort']}, Not: {ders['not']}, Durum: {ders['durum']}\n")
                         print("↑" * 75)
                         time.sleep(kacSaniyedeBir)
                 break
